@@ -7,12 +7,12 @@ const register = require(`./gulp/utils/register`);
 
 register(gulp, plugins, config)([
   'build-js',
-  'build-scss',
+  'build-stylus',
   'copy',
   'serve',
   'watch',
   'deploy'
 ]);
 
-gulp.task('build', gulp.parallel('build-js', 'build-scss', 'copy'));
+gulp.task('build', gulp.parallel('build-js', 'build-stylus', 'copy'));
 gulp.task('default', gulp.series('build', gulp.parallel('watch', 'serve')));

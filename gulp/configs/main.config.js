@@ -1,6 +1,6 @@
 module.exports = {
   paths: {
-    sass: './sass/**/*.scss',
+    stylus: './stylus/**/*.styl',
     entry: './js/index.js',
     js: './js/**/*.js',
     html: './*.html',
