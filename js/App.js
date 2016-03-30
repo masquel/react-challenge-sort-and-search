@@ -5,18 +5,54 @@ import UserList from './components/UserList';
 import ActiveUser from './components/ActiveUser';
 
 
-export default class App extends Component {
-  constructor(props) {
-    super(props);
-  }
+const App = React.createClass({
+  getInitialState() {
+    return {
+      data: [],
+      filterText: '',
+      sortBy: '',
+      order: ''
+    }
+  },
+
+  loadData(){
+    $.ajax({
+      url: './data.json',
+      success: function(response){
+        this.setState({data: response});
+      }.bind(this),
+      error: function(err,status,xhr){
+        console.error(err);
+      }.bind(this)
+    })
+  },
+  componentDidMount(){
+    this.loadData();
+  },
+  handleUserInput(filterText){
+    this.setState({
+      filterText: filterText
+    })
+  },
+  handeUserSortSelect(sortBy,sortOrder){
+    this.setState({
+      sortBy: sortBy,
+      sortOrder: sortOrder
+    })
+  },
   render() {
     return (
       <div className="app container-fluid">
-        <SearchBar />
-        <ToolBar />
+        <SearchBar 
+          filterText = {this.state.filterText} 
+          onUserInput = {this.handleUserInput}
+        />
+        <ToolBar 
+          onUserSortSelect = {this.handeUserSortSelect}
+        />
         <div className="row">
           <div className="col-sm-8 col-md-9 col-lg-10">
-            <UserList />
+            <UserList data={this.state.data} filterText={this.state.filterText} sortBy={this.state.sortBy} order={this.state.sortOrder}/>
           </div>
           <div className="col-sm-4 col-md-3 col-lg-2">
             <ActiveUser />
@@ -25,4 +61,6 @@ export default class App extends Component {
       </div>
     );
   }
-}
+});
+
+export default App;

@@ -25,6 +25,15 @@
     max-width 50px
     max-height 50px
   &-list
-    tr
+    &>tbody>tr
       &:hover
-        background-color #eee  
+        cursor pointer
+        background-color #eee
+
+.toolbar
+  margin 15px auto
+  .btn + .btn
+    margin-left 20px
+
+.searchbar
+  margin-bottom 10px          

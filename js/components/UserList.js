@@ -3,27 +3,34 @@ import UserData from './UserData';
 
 
 const UserList = React.createClass({
-	loadData(){
-		$.ajax({
-			url: './data.json',
-			success: function(response){
-				this.setState({data: response});
-			}.bind(this),
-			error: function(err,status,xhr){
-				console.error(err);
-			}.bind(this)
-		})
-	},
-	getInitialState(){
-		return {
-			data: []
-		}
-	},
-	componentDidMount(){
-		this.loadData();
-	},
 	render(){
-		var UsersData = this.state.data.map(userData => <UserData key={userData.id} data={userData} />);
+		var UsersData = [];
+		this.props.data.forEach(function(userData){
+			if(userData.name.indexOf(this.props.filterText) === -1)
+				return;
+			UsersData.push(<UserData key={userData.id} data={userData} />);
+		}.bind(this));
+		if(this.props.sortBy === 'name'){
+			UsersData.sort(function(fobj, sobj){
+				if(this.props.order === 'asc'){
+					if(fobj.props.data.name.toLowerCase() < sobj.props.data.name.toLowerCase()) return -1;
+					if(fobj.props.data.name.toLowerCase() > sobj.props.data.name.toLowerCase()) return 1;	
+				}else{
+					if(fobj.props.data.name.toLowerCase() < sobj.props.data.name.toLowerCase()) return 1;
+					if(fobj.props.data.name.toLowerCase() > sobj.props.data.name.toLowerCase()) return -1;
+				}
+				return 0;	
+			}.bind(this));
+		}
+		if(this.props.sortBy === 'age'){
+			UsersData.sort(function(fobj, sobj){
+				if(this.props.order === 'asc'){
+					return fobj.props.data.age - sobj.props.data.age;
+				}else{
+					return sobj.props.data.age -fobj.props.data.age;
+				}
+			}.bind(this));
+		}
 		return (
 			<table className="table table-striped table-bordered user-list">
 				<thead>
