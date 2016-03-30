@@ -9,9 +9,11 @@ const App = React.createClass({
   getInitialState() {
     return {
       data: [],
+      dataTemp: [],
       filterText: '',
       sortBy: '',
-      order: ''
+      order: '',
+      activeUser: ''
     }
   },
 
@@ -20,26 +22,38 @@ const App = React.createClass({
       url: './data.json',
       success: function(response){
         this.setState({data: response});
+        this.setState({activeUser: this.state.data[0]});
       }.bind(this),
       error: function(err,status,xhr){
         console.error(err);
       }.bind(this)
     })
   },
-  componentDidMount(){
+  
+  componentWillMount(){
     this.loadData();
   },
+
   handleUserInput(filterText){
     this.setState({
       filterText: filterText
     })
   },
-  handeUserSortSelect(sortBy,sortOrder){
+
+  handleUserSortSelect(sortBy,sortOrder){
     this.setState({
       sortBy: sortBy,
       sortOrder: sortOrder
     })
   },
+
+  handleActiveUser(id){
+    this.setState({
+      activeUser: this.state.data[id]
+    })
+  },
+
+
   render() {
     return (
       <div className="app container-fluid">
@@ -48,14 +62,20 @@ const App = React.createClass({
           onUserInput = {this.handleUserInput}
         />
         <ToolBar 
-          onUserSortSelect = {this.handeUserSortSelect}
+          onUserSortSelect = {this.handleUserSortSelect}
         />
         <div className="row">
-          <div className="col-sm-8 col-md-9 col-lg-10">
-            <UserList data={this.state.data} filterText={this.state.filterText} sortBy={this.state.sortBy} order={this.state.sortOrder}/>
+          <div className="col-sm-7 col-md-8 col-lg-9">
+            <UserList 
+              data={this.state.data} 
+              filterText={this.state.filterText} 
+              sortBy={this.state.sortBy} 
+              order={this.state.sortOrder}
+              onUserSelected={this.handleActiveUser}
+            />
           </div>
-          <div className="col-sm-4 col-md-3 col-lg-2">
-            <ActiveUser />
+          <div className="col-sm-5 col-md-4 col-lg-3">
+            <ActiveUser data={this.state.activeUser}/>
           </div>
         </div>
       </div>
