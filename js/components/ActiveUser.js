@@ -11,7 +11,7 @@ const ActiveUser = React.createClass({
 	render(){
 		if(this.state.loaded && this.props.data){
 			return (
-				<div className="thumbnail active-user text-center">
+				<div className="thumbnail active-user text-center" data-spy="affix" data-offset-top="400">
 					<img src={"images/" + this.props.data.image + ".svg"} alt={this.props.data.image}/>
 					<div className="thumbnail-caption">
 						<h3>{this.props.data.name}</h3>

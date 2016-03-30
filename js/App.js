@@ -97,20 +97,26 @@ const App = React.createClass({
     }
     // Записываем обработанные данные для отправки на UserList
     this.setState({filteredData:UsersData});
-    
+
     // Первый в списке становится активных после всех манипуляций
-    this.handleActiveUser(UsersData[0].id);
+    if(UsersData.length > 0){
+      this.handleActiveUser(UsersData[0].id);
+    }else{
+      this.handleActiveUser();
+    }
   },
   render() {
     return (
       <div className="app container-fluid">
-        <SearchBar 
-          filterText = {this.state.filterText} 
-          onUserInput = {this.handleUserInput}
-        />
-        <ToolBar
-          onUserSortSelect = {this.handleUserSortSelect}
-        />
+        <header className="navbar-static-top">
+          <SearchBar 
+            filterText = {this.state.filterText} 
+            onUserInput = {this.handleUserInput}
+          />
+          <ToolBar
+            onUserSortSelect = {this.handleUserSortSelect}
+          />
+        </header>
         <div className="row">
           <div className="col-sm-7 col-md-8 col-lg-9">
             <UserList 

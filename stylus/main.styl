@@ -26,6 +26,7 @@
     max-height 50px
   &-list
     &>tbody>tr
+      transition all .6s ease
       &:hover
         cursor pointer
         background-color #eee
@@ -39,6 +40,15 @@
   margin-bottom 10px
 
 .active-user
+  top 0
   padding 25px
   table
-    vertical-align middle            
+    vertical-align middle
+
+
+@media(max-width 768px){
+  .affix{
+    position: static;
+  }
+  
+}    
