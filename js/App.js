@@ -9,10 +9,10 @@ const App = React.createClass({
   getInitialState() {
     return {
       data: [],
-      dataTemp: [],
+      filteredData: [],
       filterText: '',
       sortBy: '',
-      order: '',
+      sortOrder: '',
       activeUser: ''
     }
   },
@@ -21,7 +21,12 @@ const App = React.createClass({
     $.ajax({
       url: './data.json',
       success: function(response){
-        this.setState({data: response});
+        this.setState(
+          {
+            data: response,
+            filteredData: response
+          }
+        );
         this.setState({activeUser: this.state.data[0]});
       }.bind(this),
       error: function(err,status,xhr){
@@ -29,22 +34,26 @@ const App = React.createClass({
       }.bind(this)
     })
   },
-  
-  componentWillMount(){
+
+  componentDidMount(){
     this.loadData();
   },
 
   handleUserInput(filterText){
     this.setState({
       filterText: filterText
-    })
+    },function(){
+      this.updateData()
+    });
   },
 
   handleUserSortSelect(sortBy,sortOrder){
     this.setState({
       sortBy: sortBy,
       sortOrder: sortOrder
-    })
+    },function(){
+      this.updateData()
+    });
   },
 
   handleActiveUser(id){
@@ -53,7 +62,45 @@ const App = React.createClass({
     })
   },
 
+  updateData(){
+    var UsersData = [];
+    // Филтрация данных
+    this.state.data.forEach(function(userData){
+      if(userData.name.indexOf(this.state.filterText) === -1) return;
+      UsersData.push(userData);
+    }.bind(this));
 
+    // Сортируем по имени
+    if(this.state.sortBy === 'name'){
+      UsersData.sort(function(fobj, sobj){
+        var fname = fobj.name.toLowerCase();
+        var sname = sobj.name.toLowerCase();
+        if(this.state.sortOrder === 'asc'){
+          if(fname < sname) return -1;
+          if(fname > sname) return 1; 
+        }else{
+          if(fname < sname) return 1;
+          if(fname > sname) return -1;
+        }
+        return 0; 
+      }.bind(this));
+    }
+    // Сортируем по возрасту
+    if(this.state.sortBy === 'age'){
+      UsersData.sort(function(fobj, sobj){
+        if(this.state.sortOrder === 'asc'){
+          return fobj.age - sobj.age;
+        }else{
+          return sobj.age - fobj.age;
+        }
+      }.bind(this));
+    }
+    // Записываем обработанные данные для отправки на UserList
+    this.setState({filteredData:UsersData});
+    
+    // Первый в списке становится активных после всех манипуляций
+    this.handleActiveUser(UsersData[0].id);
+  },
   render() {
     return (
       <div className="app container-fluid">
@@ -61,13 +108,13 @@ const App = React.createClass({
           filterText = {this.state.filterText} 
           onUserInput = {this.handleUserInput}
         />
-        <ToolBar 
+        <ToolBar
           onUserSortSelect = {this.handleUserSortSelect}
         />
         <div className="row">
           <div className="col-sm-7 col-md-8 col-lg-9">
             <UserList 
-              data={this.state.data} 
+              data={this.state.filteredData} 
               filterText={this.state.filterText} 
               sortBy={this.state.sortBy} 
               order={this.state.sortOrder}
